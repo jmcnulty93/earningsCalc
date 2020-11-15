@@ -1,0 +1,223 @@
+body {
+  background-color: black;
+  text-align: center;
+}
+
+h1 {
+  color: red;
+  text-align: center;
+}
+
+
+.info {
+  color: pink;
+  border-color: #263238 ;
+}
+
+#instructions {
+  color: #455A64;
+  background-color: black;
+  text-align: left;
+  padding-left: 25px;
+  /*margin-left: 25px;*/
+}
+
+#instructionsCarry {
+  color: black;
+  background-color: blue;
+  text-align: left;
+  padding-left: 25px;
+  /*margin-left: 25px;*/
+}
+
+
+#infoHeading {
+  color: blue;
+  background-color: black;
+  text-align: left;
+  padding-left: 25px
+}
+
+.content {
+  padding: 0 18px;
+  display: none;
+  overflow: hidden;
+  /* background-color: #f1f1f1; */
+  background-color: blue;
+}
+
+
+.boxes{
+  background-color: red;
+  color: black;
+  width: 150px;
+}
+
+
+.inputBoxes{
+  border-style: double;
+
+  border-radius: 0%;
+}
+
+.titles {
+  width: 125px;
+  color: pink;
+}
+
+h5 {
+  color: #00FF00;
+}
+
+p {
+  color: black;
+}
+
+
+#nowDate {
+  background-color: green;
+}
+
+#expirationDate {
+  background-color: green;
+}
+
+#fairVol {
+  background-color: green;
+}
+
+#ernMove {
+  background-color: green;
+}
+
+#fairVol2 {
+  background-color: green;
+}
+
+#impliedVolWithErn {
+  background-color: green;
+}
+
+.ernVolinstruct {
+  background-color: #eee;
+  color: #444;
+  cursor: pointer;
+  padding: 18px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  width: 65%;
+  border-style: solid;
+  border-color: purple;
+  text-align: left;
+  outline: none;
+  font-size: 15px;
+}
+
+.active, .ernVolInstruct:hover {
+  background-color: #555;
+
+}
+
+.forwardVol {
+  background-color: #eee;
+  color: #444;
+  cursor: pointer;
+  padding: 18px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  width: 65%;
+  border-style: solid;
+  border-color: purple;
+  text-align: left;
+  outline: none;
+  font-size: 15px;
+}
+
+.active, .forwardVol:hover {
+  background-color: #555;
+
+}
+
+#expiration1 {
+  background-color: green;
+}
+
+#expiration2 {
+  background-color: green;
+}
+
+#impliedVol1 {
+  background-color: green;
+}
+
+#impliedVol2 {
+  background-color: green;
+}
+
+.timeZone {
+  background-color: #eee;
+  color: #444;
+  cursor: pointer;
+  padding: 18px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  width: 65%;
+  border-style: solid;
+  border-color: purple;
+  text-align: left;
+  outline: none;
+  font-size: 15px;
+}
+
+.active, .timeZone:hover {
+  background-color: #555;
+
+}
+
+.carryData {
+  background-color: #eee;
+  color: #444;
+  cursor: pointer;
+  padding: 18px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  width: 65%;
+  border-style: solid;
+  border-color: purple;
+  text-align: left;
+  outline: none;
+  font-size: 15px;
+}
+
+.active, .carryData:hover {
+  background-color: #555;
+
+}
+
+#stockSettleT {
+  background-color: green;
+}
+
+#optionSettleT {
+  background-color: green;
+}
+
+.holidays {
+  background-color: #eee;
+  color: #444;
+  cursor: pointer;
+  padding: 18px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  width: 65%;
+  border-style: solid;
+  border-color: purple;
+  text-align: left;
+  outline: none;
+  font-size: 15px;
+}
+
+.active, .holidays:hover {
+  background-color: #555;
+
+}

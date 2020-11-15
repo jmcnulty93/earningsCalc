@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>calendar</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+
+    <!-- My CSS Styles -->
+    <link rel="stylesheet" href="calendarstyles.css">
+
+
+    <!--js and jquery for drop down menus-->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+
+
+  </head>
+  <br />
+  <br />
+  <h1>Earnings Vol Calc</h1>
+
+  <body>
+
+    <div class="inputs">
+
+      <br />
+      <!--<a href="page2.html">page2</a>
+      <br />-->
+      <button id="calc" type="button" onclick="pushFullStartDate(); pushFullExpirDate(); pushMilli();">Calculate</button>
+      <br />
+      <!--<button id="calc2" type="button" onclick="yoYo();">Calc Trading Days</button>-->
+      <!--createDateList(); createDayOfWeekList(); createDateandDayInfo(); createHolidayList(); creatHolidayListDateFormat(); createAdjHolidayDateFormatList(); createScrubHolidayList(); createTradingDaysToExpirList(); pushTradingDays();-->
+      <br />
+      <br />
+
+
+      <form class="user-inputs" action="index.html" method="post">
+
+        <div class="row">
+
+          <div class="inputBoxes col-lg-4 col-md-3 col-sm-12" style="display:none">
+            <label class="titles">Ticker</label>
+            <input class="boxes" id="ticker" type="text" value="IBM" >
+          </div>
+          <div class="inputBoxes col-lg-4 col-md-3 col-sm-12" style="display:none">
+            <label class="titles">Stock Price</label>
+            <input class="boxes" id="stockPx" type="text" value = "51" onchange="">
+          </div>
+          <div class="inputBoxes col-lg-4 col-md-3 col-sm-12" style="display:none">
+            <label class="titles">Strike</label>
+            <input class="boxes" id="strikePx" type="text" value = "55">
+          </div>
+
+        </div>
+
+        <div class="row">
+
+          <div class="inputBoxes col-lg-4 col-md-3 col-sm-12">
+            <label class="titles">Today</label>
+            <input class="boxes" id="nowDate" type="date" onchange="pushFullStartDate(); pushFullExpirDate(); pushMilli();" onload="">
+          </div>
+          <div class="inputBoxes col-lg-4 col-md-3 col-sm-12">
+            <label class="titles">Expir Date</label>
+            <input class="boxes" id="expirationDate" type="date" onchange="pushFullStartDate(); pushFullExpirDate(); pushMilli();">
+          </div>
+
+          <!--<label>Enter Days</label>
+          <input id="hardCodeDaysToExpir" type="text" onchange="hardCodeDaysToExpir1 (), pushDaysToExpirCalc()">-->
+
+          <!--<label>Days To Expir</label>
+          <input id="daysToExpir" type="text" value="30">-->
+
+          <div class="inputBoxes col-lg-4 col-md-3 col-sm-12">
+            <label class="titles">daysToExpir</label>
+            <input class="boxes" id="dte" type="text" value="0" onchange="">
+          </div>
+
+        </div>
+
+        <div class="row">
+
+          <div class="inputBoxes col-lg-4 col-md-3 col-sm-12">
+            <label class="titles">Full Start Date</label>
+            <input class="boxes" id="fullStartDate" type="text" value="0" onchange="">
+          </div>
+          <div class="inputBoxes col-lg-4 col-md-3 col-sm-12">
+            <label class="titles">Full Expir Date</label>
+            <input class="boxes" id="fullExpirDate" type="text" value = "0" onchange="">
+          </div>
+          <div class="inputBoxes col-lg-4 col-md-3 col-sm-12">
+            <label class="titles">Trading Days</label>
+            <input class="boxes" id="tradingDays" type="text" value = "0">
+          </div>
+
+        </div>
+
+        <br />
+        <hr />
+        <br />
+
+        <button type="button" class="ernVolInstruct">How This Calendar Works and Fair Vol Earnings Explanation</button>
+          <div class="content">
+
+            <div class="row">
+              <div id="instructions" class="info inputBoxes col-lg-12 col-md-12 col-sm-12">
+
+                  <h5>How This Calander Works</h5>
+                  Input feilds in green take user input<br />
+                  <br />
+                  Example:  Today = 12-11-2020     Expiration Date = 12-12-2020<br />
+                  There is 1 day to expiration.  (When Today = 12-11-2020 the Days To Expiration will be Zero.)<br />
+                  There are 2 trading days. (assuming both 12-11 and 12-12 are not weekend or holidays)<br />
+                  When Today = Expiration, there is 1 trading day.<br />
+                  <br />
+                  <br />
+                  <h5>How Fair Vol With Ern Calc Works</h5>
+                  252 trading days are assumed.<br />
+                  Vol is an annualizd standard deviation.<br />
+                  Vol squared is an annualized variance.<br />
+                  The annual variance divided by the number of trading days per year <br />
+                  produces the daily variance.<br />
+                  <br />
+                  A given expiration has a certain number of trading days.<br />
+                  (Trading Days To Expiration) multiplied by the (Daily Variance) yeilds<br />
+                  (Total Variance To Expiration).<br />
+                  <br />
+                  An expiration with earnings has a daily variance derived from a fair vol <br />
+                  of (Trading Days To Expiration - 1) and a daily variance derived from the (% Ern Move)<br />
+                  for One Trading Day.<br />
+                  The daily variances derived from the fair vol and the one daily variance derived<br />
+                  from the % Ern Move can all be added together to produce a (Total Variance To Expiration With Ern Move).<br />
+                  This (Total Variance To Expiration With Ern Move) can be divided by the (Trading Days To Expiration) to <br />
+                  to produce a (Daily Variance With Ern).<br />
+                  The square root of the (Daily Variance With Ern) produces a daily standard deviation with Ern.<br />
+                  This daily standard deviation is the (Daily Vol With Ern).<br />
+                  The (Daily Vol With Ern) can be annualized by multiplying it by the square root of the number <br />
+                  of (Trading Days Per Year).  This yeilds the (Fair Vol With Ern).<br />
+                  <br />
+                  Alternate way to calc Fair Vol With Ern: <br />
+                  Take the square root of the (Total Variance To Expiration With Ern) to produce a standard deviation<br />
+                  which is the (Vol to Expiration).  The (Vol to Expiration) can be annualized by multiplying it by the <br />
+                  sqaure root of Trading Time To Expiration (Trading Days To Expir / Number of Trading Days Per Year).<br />
+                  <br />
+                  <br />
+                  <h5>How Implied Ern Move Calc Works</h5>
+                  An expiration has a certain number of Trading Days To Expiration.<br />
+                  The implied vol with an earnings event included will have one day of a variance <br />
+                  that is the % Ern Move and the rest of the days will be a normal daily variance.<br />
+                  This normal daily variance is unknown bc it will happen in the future.  However, <br />
+                  we can estimate it based on past data and comparable real-time factors.<br />
+                  This estimate is called the fair vol.<br />
+                  Therefore the normal daily variance that we try to predict for the future daily % returns<br />
+                  for the stock is derived from a fair vol input.<br />
+                  The % Ern Move is also an unknown event.  But we can estimate bases on past Ern Move's <br />
+                  for the stock.  Then we can compare past % Ern Moves to the Implied Ern Move.<br />
+                  <br />
+                  If we have a fair vol (estimate of future vol no ern) and an Implied Vol With Ern Included, we <br />
+                  can back out the Implied Ern Move.<br />
+                  The (Implied Vol With Ern Included Squared) will give us an (Annualized Variance With Ern). <br />
+                  Divide the (Annualized Variance With Ern) by 252 (num of trading days per year). <br />
+                  This result is the (Daily Variance With Ern).<br />
+                  Multiple the (Daily Variance With Ern) by (Trading Days To Expiration). <br />
+                  This yeilds the (Total Variance To Expiration).<br />
+                  <br />
+                  Square the Fair Vol and divide by 252 for the (Daily Fair Variance).<br />
+                  Multiply the (Daily Fair Variance) by (Trading Days To Expiration - 1). <br />
+                  This yeilds the (Total Fair Variance To Expiration No Ern). <br />
+                  Issolate the (Ern Variance) within the (Total Variance to Expiration) by subtracting<br />
+                  the (Total Fair Variance To Expiration No Ern) from the (Total Variance To Expiration).<br />
+                  <br />
+                  The square root of the (Ern Variance) is a one day standard deviation for the Implied Ern Move.<br />
+                  Or, the One Day Vol for the Implied Ern Move.  It is an Implied % Move for the Earngins event.<br />
+                  <br />
+                  StockPx * e^(One Day Vol) = Up Move <br />
+                  StockPx * e^(-One Day Vol) = Down Move <br />
+                  <br />
+                  The One Day Vol can be annualized by multiplying by the Square Root of Trading Day Per Year.<br />
+                  To use an Annualized Vol to produce a one day move in the stock:<br />
+                  StockPx * e^(Annual Vol * SQRT(1/252)) = Up Move <br />
+                  StockPx * e^(-Annual Vol * SQRT(1/252)) = Down Move <br />
+                  <br />
+
+
+              </div>
+
+            </div>
+
+        </div>
+
+        <hr />
+
+        <div class="row">
+          <div id="infoHeading" class="info inputBoxes col-lg-12 col-md-12 col-sm-12">
+
+              Fair Vol with Ern Move:
+
+          </div>
+        </div>
+
+        <div class="row">
+
+          <div class="info inputBoxes col-lg-4 col-md-3 col-sm-12">
+            <label class="titles">Fair Vol</label>
+            <input class="boxes" id="fairVol" type="text" value="40" onchange="">
+          </div>
+          <div class="info inputBoxes col-lg-4 col-md-3 col-sm-12">
+            <label class="titles">Ern Move: % </label>
+            <input class="boxes" id="ernMove" type="text" value = "10" onchange="">
+          </div>
+          <div class="info inputBoxes col-lg-4 col-md-3 col-sm-12">
+            <label class="titles">Fair Vol with Ern</label>
+            <input class="boxes" id="volWithErn" type="text" value = "">
+          </div>
+
+        </div>
+
+        <hr />
+        <hr />
+
+        <div class="row">
+          <div id="infoHeading" class="info inputBoxes col-lg-12 col-md-12 col-sm-12">
+
+              Implied Ern Move based on Option Implied Vol:
+
+          </div>
+        </div>
+
+        <div class="row">
+
+          <div class="info inputBoxes col-lg-4 col-md-3 col-sm-12">
+            <label class="titles">Fair Vol</label>
+            <input class="boxes" id="fairVol2" type="text" value="40" onchange="">
+          </div>
+          <div class="info inputBoxes col-lg-4 col-md-3 col-sm-12">
+            <label class="titles">Implied Vol With Ern</label>
+            <input class="boxes" id="impliedVolWithErn" type="text" value = "60" onchange="">
+          </div>
+          <div class="info inputBoxes col-lg-4 col-md-3 col-sm-12">
+            <label class="titles">Implied Ern Move %</label>
+            <input class="boxes" id="impliedErnMove" type="text" value = "">
+          </div>
+
+        </div>
+
+    <hr />
+    <hr />
+
+
+    <button type="button" class="forwardVol">Forward Vol</button>
+      <div class="content">
+        <hr />
+        <hr />
+        <button id="calc2" type="button" class="forwardVolCalcButton">Calculate</button>
+        <hr />
+        <hr />
+
+        <div class="row">
+
+          <div class="inputBoxes col-lg-4 col-md-3 col-sm-12">
+            <label class="titles">Expiraton 1</label>
+            <input class="boxes" id="expiration1" type="date" value="" onchange="pushFullStartDate(); pushFullExpir1Date(); pushMilli1();">
+          </div>
+          <div class="inputBoxes col-lg-4 col-md-3 col-sm-12">
+            <label class="titles">Days To Expiration 1</label>
+            <input class="boxes" id="daysToExpir1" type="text" value = "" onchange="">
+          </div>
+          <div class="inputBoxes col-lg-4 col-md-3 col-sm-12">
+            <label class="titles">Trading Days 1</label>
+            <input class="boxes" id="tradingDays1" type="text" value = "">
+          </div>
+
+        </div>
+
+        <div class="row">
+
+          <div class="inputBoxes col-lg-4 col-md-3 col-sm-12">
+            <label class="titles">Expiraton 2</label>
+            <input class="boxes" id="expiration2" type="date" value="" onchange="pushFullStartDate(); pushFullExpir2Date(); pushMilli2();">
+          </div>
+          <div class="inputBoxes col-lg-4 col-md-3 col-sm-12">
+            <label class="titles">Days To Expiraton 2</label>
+            <input class="boxes" id="daysToExpir2" type="text" value = "" onchange="">
+          </div>
+          <div class="inputBoxes col-lg-4 col-md-3 col-sm-12">
+            <label class="titles">Trading Days 2</label>
+            <input class="boxes" id="tradingDays2" type="text" value = "">
+          </div>
+
+        </div>
+
+
+        <div class="row">
+
+          <div class="inputBoxes col-lg-4 col-md-3 col-sm-12">
+            <label class="titles">Implied Vol 1</label>
+            <input class="boxes" id="impliedVol1" type="text" value="39" onchange="">
+          </div>
+          <div class="inputBoxes col-lg-4 col-md-3 col-sm-12">
+            <label class="titles">Implied Vol 2</label>
+            <input class="boxes" id="impliedVol2" type="text" value = "44" onchange="">
+          </div>
+          <div class="inputBoxes col-lg-4 col-md-3 col-sm-12">
+            <label class="titles">Forward Vol</label>
+            <input class="boxes" id="forwardVol" type="text" value = "">
+          </div>
+
+        </div>
+
+        <div class="row">
+
+          <div class="inputBoxes col-lg-4 col-md-3 col-sm-12">
+            <label class="titles">Full Expir1 Date</label>
+            <input class="boxes" id="fullExpir1Date" type="text" value="" onchange="">
+          </div>
+          <div class="inputBoxes col-lg-4 col-md-3 col-sm-12">
+            <label class="titles">Full Expir2 Date</label>
+            <input class="boxes" id="fullExpir2Date" type="text" value = "" onchange="">
+          </div>
+          <div class="inputBoxes col-lg-4 col-md-3 col-sm-12" style="display:none">
+            <label class="titles">blank901</label>
+            <input class="boxes" id="blank901" type="text" value = "">
+          </div>
+
+        </div>
+
+        <div class="row">
+
+          <div class="inputBoxes col-lg-4 col-md-3 col-sm-12" style="display:none">
+            <label class="titles">Expir1 TZone Offset</label>
+            <input class="boxes" id="expir1TZoneOffset" type="text" value="" onchange="">
+          </div>
+          <div class="inputBoxes col-lg-4 col-md-3 col-sm-12" style="display:none">
+            <label class="titles">Expir2 TZone Offset</label>
+            <input class="boxes" id="expir2TZoneOffset" type="text" value = "" onchange="">
+          </div>
+          <div class="inputBoxes col-lg-4 col-md-3 col-sm-12" style="display:none">
+            <label class="titles">blank701</label>
+            <input class="boxes" id="blank701" type="text" value = "">
+          </div>
+
+        </div>
+
+        <div class="row">
+
+          <div class="inputBoxes col-lg-4 col-md-3 col-sm-12" style="display:none">
+            <label class="titles">Expir1Milli</label>
+            <input class="boxes" id="expir1Milli" type="text" value="" onchange="">
+          </div>
+          <div class="inputBoxes col-lg-4 col-md-3 col-sm-12" style="display:none">
+            <label class="titles">Expir2Milli</label>
+            <input class="boxes" id="expir2Milli" type="text" value = "" onchange="">
+          </div>
+          <div class="inputBoxes col-lg-4 col-md-3 col-sm-12" style="display:none">
+            <label class="titles">blank801</label>
+            <input class="boxes" id="blank801" type="text" value = "">
+          </div>
+
+        </div>
+
+        <div class="row">
+          <div id="instructionsCarry" class="info inputBoxes col-lg-12 col-md-12 col-sm-12">
+
+              <h5>How Forward Vol Calc Works</h5>
+              Input feilds in green take user input<br />
+              <br />
+
+              <br />
+              Vol is broken down into a daily variance for each trading day.<br />
+              A daily variance is calcd for Implied Vol 1.<br />
+              Expiration 1 has a certain number of trading days.<br />
+              Expiration 1 will have a Total Variance (Daily Variance * Expiration 1 Trading Days)<br />
+              <br />
+              Expiration 2's Total Variance can be obtained in the same manner.<br />
+              Expiration 2's Total Variance can be broken down into two components:<br />
+              Expiration 1 Total Variance + Variance After Expiration 1 = Expiration 2 Total Variance <br />
+              <br />
+              Expiration 2 will have a certain number of trading days after Expiration 1. <br />
+              Therefore, the Variance After Expiration 1 can be broken down into a daily variance <br />
+              for each trading day after Expiration 1.<br />
+              <br />
+              The square root of a daily variance is the daily vol.  The daily vol multiplied by the <br />
+              square root of annual trading days (usually 252) yeilds an annualized daily vol.<br />
+              As a result, the daily variance After Expiration 1 can be converted into an annualized vol<br />
+              which is called the Forward Vol.  Essentially the Forward Vol is the amount of variance in <br />
+              the Total Variance for Expiration 2 not covered by Expiration 1. <br />
+          </div>
+
+        </div>
+
+        <hr />
+        <hr />
+
+
+    </div>
+
+
+    <hr />
+    <hr />
+
+
+    <button type="button" class="timeZone">Time Zone Data</button>
+      <div class="content">
+
+
+        <div class="row">
+
+          <div class="inputBoxes col-lg-4 col-md-3 col-sm-12">
+            <label class="titles">Start Date TZone Offset</label>
+            <input class="boxes" id="startDateTZoneOffset" type="text" value="0" onchange="">
+          </div>
+          <div class="inputBoxes col-lg-4 col-md-3 col-sm-12">
+            <label class="titles">Expir Date TZone Offset</label>
+            <input class="boxes" id="expirDateTZoneOffset" type="text" value = "0" onchange="">
+          </div>
+          <div class="inputBoxes col-lg-4 col-md-3 col-sm-12" style="display:none">
+            <label class="titles">blank499</label>
+            <input class="boxes" id="blank499" type="text" value = "">
+          </div>
+
+        </div>
+
+        <div class="row">
+
+          <div class="inputBoxes col-lg-4 col-md-3 col-sm-12">
+            <label class="titles">Start Date Milliseconds</label>
+            <input class="boxes" id="startDateMilli" type="text" value="0">
+          </div>
+          <div class="inputBoxes col-lg-4 col-md-3 col-sm-12">
+            <label class="titles">Expir Date Milliseconds</label>
+            <input class="boxes" id="expirDateMilli" type="text" value = "0" onchange="">
+          </div>
+          <div class="inputBoxes col-lg-4 col-md-3 col-sm-12">
+            <label class="titles">Milliseconds To Expir</label>
+            <input class="boxes" id="milliToExpir" type="text" value = "0">
+          </div>
+
+        </div>
+
+      </div>
+
+    <hr />
+
+    <button type="button" class="carryData">Stock and Option Days Carry Data</button>
+      <div class="content">
+
+        <div class="row">
+
+          <div class="inputBoxes col-lg-4 col-md-3 col-sm-12">
+            <label class="titles">Stock Settle T+2</label>
+            <input class="boxes" id="stockSettleT" type="text" value="2">
+          </div>
+          <div class="inputBoxes col-lg-4 col-md-3 col-sm-12">
+            <label class="titles">Stock Buy Settle Date</label>
+            <input class="boxes" id="stockBuySettleDate" type="text" value = "" onchange="">
+          </div>
+          <div class="inputBoxes col-lg-4 col-md-3 col-sm-12">
+            <label class="titles">Stock Sell Settle Date</label>
+            <input class="boxes" id="stockSellSettleDate" type="text" value = "">
+          </div>
+
+        </div>
+
+        <div class="row">
+
+          <div class="inputBoxes col-lg-4 col-md-3 col-sm-12">
+            <label class="titles">Stock Days Carry</label>
+            <input class="boxes" id="stockDaysCarry" type="text" value="">
+          </div>
+          <div class="inputBoxes col-lg-4 col-md-3 col-sm-12" style="display:none">
+            <label class="titles">Stock Buy Settle Date In Millisecs</label>
+            <input class="boxes" id="stockBuySettleDateMilli" type="text" value = "" onchange="">
+          </div>
+          <div class="inputBoxes col-lg-4 col-md-3 col-sm-12" style="display:none">
+            <label class="titles">Stock Sell Settle Date in Millisecs</label>
+            <input class="boxes" id="stockSellSettleDateMilli" type="text" value = "">
+          </div>
+
+        </div>
+
+        <div class="row">
+
+          <div class="inputBoxes col-lg-4 col-md-3 col-sm-12">
+            <label class="titles">Option Settle T+1</label>
+            <input class="boxes" id="optionSettleT" type="text" value="1">
+          </div>
+          <div class="inputBoxes col-lg-4 col-md-3 col-sm-12">
+            <label class="titles">Option Buy Settle Date</label>
+            <input class="boxes" id="optionBuySettleDate" type="text" value = "" onchange="">
+          </div>
+          <div class="inputBoxes col-lg-4 col-md-3 col-sm-12">
+            <label class="titles">Option Sell Settle Date</label>
+            <input class="boxes" id="optionSellSettleDate" type="text" value = "">
+          </div>
+
+        </div>
+
+        <div class="row">
+
+          <div class="inputBoxes col-lg-4 col-md-3 col-sm-12">
+            <label class="titles">Option Days Carry</label>
+            <input class="boxes" id="optionDaysCarry" type="text" value="">
+          </div>
+          <div class="inputBoxes col-lg-4 col-md-3 col-sm-12" style="display:none">
+            <label class="titles">Option Buy Settle Date In Millisecs</label>
+            <input class="boxes" id="optionBuySettleDateMilli" type="text" value = "" onchange="">
+          </div>
+          <div class="inputBoxes col-lg-4 col-md-3 col-sm-12" style="display:none">
+            <label class="titles">Option Sell Settle Date in Millisecs</label>
+            <input class="boxes" id="optionSellSettleDateMilli" type="text" value = "">
+          </div>
+
+        </div>
+
+        <div class="row">
+          <div id="instructionsCarry" class="info inputBoxes col-lg-12 col-md-12 col-sm-12">
+
+              <h5>How This Calander Works</h5>
+              Carry Days calcd in this section refer to the dates from the boxes at the top of the page.<br />
+              Not the dates in the Forward Vol drop down section.<br />
+              <br />
+              Input feilds in green take user input<br />
+              <br />
+              Carry starts on Settle Buy Day. Settle buy day is the first day counted for carry.<br />
+              Carry stops on Settle Sell Day. Settle Sell Day is not counted as a day of carry.<br />
+              <br />
+              Example: Christmas is Dec 25.<br />
+              Assume 12-24 is a Monday and 12-25 is a Tuesday.<br />
+              Stock bought or sold on 12-24 will settle 12-27. (T+2)<br />
+              Options bought or sold on 12-24 will settle on 12-26 (T+1)<br />
+              The T in T+1 and T+2 stands for business days.<br />
+              Weekends, Holidays and Bank Holidays are not business days.<br />
+              Trading may occur on a Bank Holiday like Veteran's Day, but<br />
+              there will be no settlement.<br />
+              <br />
+              For a Friday Expiration when the following Monday and Tuesday are<br />
+              normal business days, T+1 is Monday and T+2 is Tuesday.<br />
+              Therefore, expiring options would settle on Monday and stock from equity<br />
+              options would settle on Tuesday.<br />
+              <br />
+              If an equity option position (long or short) is held until expiration, <br />
+              then the sell day or the buy day is expiration day.<br />
+              <br />
+              If a Weekend day or Holiday (a non-trading day) is choosen in the date pickers<br />
+              as the start date or expiration date (can also be thought of as buy trade date and <br />
+              sell trade date) then the next trading day is assumed to be the trade date.<br />
+              For example, if a Saturday is choosen as the start day (buy trade date) and the <br />
+              following Monday is a normal trading day, then the buy trade date is assumed to be <br />
+              Monday for the purposes of calculating carry.  However days to expiration and trading <br />
+              days will still be calced using Saturday as the start date. <br />
+          </div>
+        </div>
+
+        <hr />
+        <hr />
+
+      </div>
+
+
+    <hr />
+
+    <button type="button" class="holidays">Holidays Input</button>
+      <div class="content">
+
+        <h5>Holidays</h5>
+
+        <div class="row">
+
+          <div class="inputBoxes col-lg-4 col-md-3 col-sm-12">
+            <p>
+              Holidays (no trade, no settlement)
+              </p>
+          </div>
+
+          <div class="inputBoxes col-lg-4 col-md-3 col-sm-12">
+            <p>
+              Bank Holidays (yes trade, no settlement)
+              </p>
+          </div>
+
+          <div class="inputBoxes col-lg-4 col-md-3 col-sm-12">
+            <p>
+              Extra Holidays (no trade, no settlement)
+              </p>
+          </div>
+
+        </div>
+
+        <div class="row">
+
+          <div class="inputBoxes col-lg-4 col-md-3 col-sm-12">
+            <label class="titles">Holiday 1</label>
+            <input class="boxes" id="holidayOne" type="date" value="2020-11-26">
+          </div>
+          <div class="inputBoxes col-lg-4 col-md-3 col-sm-12">
+            <label class="titles">Bank Holiday 1</label>
+            <input class="boxes" id="bankHolidayOne" type="date" value ="2020-11-11" onchange="">
+          </div>
+          <div class="inputBoxes col-lg-4 col-md-3 col-sm-12">
+            <label class="titles">Extra Holiday 1</label>
+            <input class="boxes" id="extraHolidayOne" type="date" value="">
+          </div>
+
+        </div>
+
+        <div class="row">
+
+          <div class="inputBoxes col-lg-4 col-md-3 col-sm-12">
+            <label class="titles">Holiday 2</label>
+            <input class="boxes" id="holidayTwo" type="date" value="2020-12-25">
+          </div>
+          <div class="inputBoxes col-lg-4 col-md-3 col-sm-12">
+            <label class="titles">Bank Holiday 2</label>
+            <input class="boxes" id="bankHolidayTwo" type="date" value ="2021-10-11" onchange="">
+          </div>
+          <div class="inputBoxes col-lg-4 col-md-3 col-sm-12">
+            <label class="titles">Extra Holiday 2</label>
+            <input class="boxes" id="extraHolidayTwo" type="date" value="">
+          </div>
+
+        </div>
+
+        <div class="row">
+
+          <div class="inputBoxes col-lg-4 col-md-3 col-sm-12">
+            <label class="titles">Holiday 3</label>
+            <input class="boxes" id="holidayThree" type="date" value="2021-01-01">
+          </div>
+          <div class="inputBoxes col-lg-4 col-md-3 col-sm-12">
+            <label class="titles">Bank Holiday 3</label>
+            <input class="boxes" id="bankHolidayThree" type="date" value ="2021-11-11" onchange="">
+          </div>
+          <div class="inputBoxes col-lg-4 col-md-3 col-sm-12">
+            <label class="titles">Extra Holiday 3</label>
+            <input class="boxes" id="extraHolidayThree" type="date" value="">
+          </div>
+
+        </div>
+
+        <div class="row">
+
+          <div class="inputBoxes col-lg-4 col-md-3 col-sm-12">
+            <label class="titles">Holiday 4</label>
+            <input class="boxes" id="holidayFour" type="date" value="2021-01-18">
+          </div>
+          <div class="inputBoxes col-lg-4 col-md-3 col-sm-12">
+            <label class="titles">Bank Holiday 4</label>
+            <input class="boxes" id="bankHolidayFour" type="date" value ="2022-10-10" onchange="">
+          </div>
+          <div class="inputBoxes col-lg-4 col-md-3 col-sm-12">
+            <label class="titles">Extra Holiday 4</label>
+            <input class="boxes" id="extraHolidayFour" type="date" value="">
+          </div>
+
+        </div>
+
+        <div class="row">
+
+          <div class="inputBoxes col-lg-4 col-md-3 col-sm-12">
+            <label class="titles">Holiday 5</label>
+            <input class="boxes" id="holidayFive" type="date" value="2021-02-15">
+          </div>
+          <div class="inputBoxes col-lg-4 col-md-3 col-sm-12">
+            <label class="titles">Bank Holiday 5</label>
+            <input class="boxes" id="bankHolidayFive" type="date" value ="2022-11-11" onchange="">
+          </div>
+
+        </div>
+
+        <div class="row">
+
+          <div class="inputBoxes col-lg-4 col-md-3 col-sm-12">
+            <label class="titles">Holiday 6</label>
+            <input class="boxes" id="holidaySix" type="date" value="2021-04-02">
+          </div>
+          <div class="inputBoxes col-lg-4 col-md-3 col-sm-12">
+            <label class="titles">Bank Holiday 6</label>
+            <input class="boxes" id="bankHolidaySix" type="date" value ="" onchange="">
+          </div>
+
+        </div>
+
+        <div class="row">
+
+          <div class="inputBoxes col-lg-4 col-md-3 col-sm-12">
+            <label class="titles">Holiday 7</label>
+            <input class="boxes" id="holidaySeven" type="date" value="2021-05-31">
+          </div>
+          <div class="inputBoxes col-lg-4 col-md-3 col-sm-12">
+            <label class="titles">Bank Holiday 7</label>
+            <input class="boxes" id="bankHolidaySeven" type="date" value ="" onchange="">
+          </div>
+
+        </div>
+
+        <div class="row">
+
+          <div class="inputBoxes col-lg-4 col-md-3 col-sm-12">
+            <label class="titles">Holiday 8</label>
+            <input class="boxes" id="holidayEight" type="date" value="2021-07-05">
+          </div>
+          <div class="inputBoxes col-lg-4 col-md-3 col-sm-12">
+            <label class="titles">Bank Holiday 8</label>
+            <input class="boxes" id="bankHolidayEight" type="date" value ="" onchange="">
+          </div>
+
+        </div>
+
+        <div class="row">
+
+          <div class="inputBoxes col-lg-4 col-md-3 col-sm-12">
+            <label class="titles">Holiday 9</label>
+            <input class="boxes" id="holidayNine" type="date" value="2021-09-06">
+          </div>
+          <div class="inputBoxes col-lg-4 col-md-3 col-sm-12">
+            <label class="titles">Bank Holiday 9</label>
+            <input class="boxes" id="bankHolidayNine" type="date" value ="" onchange="">
+          </div>
+
+        </div>
+
+        <div class="row">
+
+          <div class="inputBoxes col-lg-4 col-md-3 col-sm-12">
+            <label class="titles">Holiday 10</label>
+            <input class="boxes" id="holidayTen" type="date" value="2021-11-25">
+          </div>
+          <div class="inputBoxes col-lg-4 col-md-3 col-sm-12">
+            <label class="titles">Bank Holiday 10</label>
+            <input class="boxes" id="bankHolidayTen" type="date" value ="" onchange="">
+          </div>
+
+        </div>
+
+        <div class="row">
+
+          <div class="inputBoxes col-lg-4 col-md-3 col-sm-12">
+            <label class="titles">Holiday 11</label>
+            <input class="boxes" id="holidayEleven" type="date" value="2021-12-24">
+          </div>
+          <div class="inputBoxes col-lg-4 col-md-3 col-sm-12">
+            <label class="titles">Bank Holiday 11</label>
+            <input class="boxes" id="bankHolidayEleven" type="date" value ="" onchange="">
+          </div>
+
+        </div>
+
+        <div class="row">
+
+          <div class="inputBoxes col-lg-4 col-md-3 col-sm-12">
+            <label class="titles">Holiday 12</label>
+            <input class="boxes" id="holidayTwelve" type="date" value="2022-01-01">
+          </div>
+          <div class="inputBoxes col-lg-4 col-md-3 col-sm-12">
+            <label class="titles">Bank Holiday 12</label>
+            <input class="boxes" id="bankHolidayTwelve" type="date" value ="" onchange="">
+          </div>
+
+        </div>
+
+        <div class="row">
+
+          <div class="inputBoxes col-lg-4 col-md-3 col-sm-12">
+            <label class="titles">Holiday 13</label>
+            <input class="boxes" id="holidayThirteen" type="date" value="2022-01-17">
+          </div>
+          <div class="inputBoxes col-lg-4 col-md-3 col-sm-12">
+            <label class="titles">Bank Holiday 13</label>
+            <input class="boxes" id="bankHolidayThirteen" type="date" value ="" onchange="">
+          </div>
+
+        </div>
+
+        <div class="row">
+
+          <div class="inputBoxes col-lg-4 col-md-3 col-sm-12">
+            <label class="titles">Holiday 14</label>
+            <input class="boxes" id="holidayFourteen" type="date" value="2022-02-21">
+          </div>
+          <div class="inputBoxes col-lg-4 col-md-3 col-sm-12">
+            <label class="titles">Bank Holiday 14</label>
+            <input class="boxes" id="bankHolidayFourteen" type="date" value ="" onchange="">
+          </div>
+
+        </div>
+
+        <div class="row">
+
+          <div class="inputBoxes col-lg-4 col-md-3 col-sm-12">
+            <label class="titles">Holiday 15</label>
+            <input class="boxes" id="holidayFifteen" type="date" value="2022-04-15">
+          </div>
+          <div class="inputBoxes col-lg-4 col-md-3 col-sm-12">
+            <label class="titles">Bank Holiday 15</label>
+            <input class="boxes" id="bankHolidayFifteen" type="date" value ="" onchange="">
+          </div>
+
+        </div>
+
+        <div class="row">
+
+          <div class="inputBoxes col-lg-4 col-md-3 col-sm-12">
+            <label class="titles">Holiday 16</label>
+            <input class="boxes" id="holidaySixteen" type="date" value="2022-05-30">
+          </div>
+          <div class="inputBoxes col-lg-4 col-md-3 col-sm-12">
+            <label class="titles">Bank Holiday 16</label>
+            <input class="boxes" id="bankHolidaySixteen" type="date" value ="" onchange="">
+          </div>
+
+        </div>
+
+        <div class="row">
+
+          <div class="inputBoxes col-lg-4 col-md-3 col-sm-12">
+            <label class="titles">Holiday 17</label>
+            <input class="boxes" id="holidaySeventeen" type="date" value="2022-07-04">
+          </div>
+          <div class="inputBoxes col-lg-4 col-md-3 col-sm-12">
+            <label class="titles">Bank Holiday 17</label>
+            <input class="boxes" id="bankHolidaySeventeen" type="date" value ="" onchange="">
+          </div>
+
+        </div>
+
+        <div class="row">
+
+          <div class="inputBoxes col-lg-4 col-md-3 col-sm-12">
+            <label class="titles">Holiday 18</label>
+            <input class="boxes" id="holidayEighteen" type="date" value="2022-09-05">
+          </div>
+          <div class="inputBoxes col-lg-4 col-md-3 col-sm-12">
+            <label class="titles">Bank Holiday 18</label>
+            <input class="boxes" id="bankHolidayEighteen" type="date" value ="" onchange="">
+          </div>
+
+        </div>
+
+        <div class="row">
+
+          <div class="inputBoxes col-lg-4 col-md-3 col-sm-12">
+            <label class="titles">Holiday 19</label>
+            <input class="boxes" id="holidayNineteen" type="date" value="2022-11-24">
+          </div>
+          <div class="inputBoxes col-lg-4 col-md-3 col-sm-12">
+            <label class="titles">Bank Holiday 19</label>
+            <input class="boxes" id="bankHolidayNineteen" type="date" value ="" onchange="">
+          </div>
+
+        </div>
+
+        <div class="row">
+
+          <div class="inputBoxes col-lg-4 col-md-3 col-sm-12">
+            <label class="titles">Holiday 20</label>
+            <input class="boxes" id="holidayTwenty" type="date" value="2022-12-26">
+          </div>
+          <div class="inputBoxes col-lg-4 col-md-3 col-sm-12">
+            <label class="titles">Bank Holiday 20</label>
+            <input class="boxes" id="bankHolidayTwenty" type="date" value ="" onchange="">
+          </div>
+
+        </div>
+
+        <div class="row">
+
+          <div class="inputBoxes col-lg-4 col-md-3 col-sm-12">
+            <label class="titles">Holiday 21</label>
+            <input class="boxes" id="holidayTwentyOne" type="date" value="2023-01-02">
+          </div>
+          <div class="inputBoxes col-lg-4 col-md-3 col-sm-12">
+            <label class="titles">Bank Holiday 21</label>
+            <input class="boxes" id="bankHolidayTwentyOne" type="date" value ="" onchange="">
+          </div>
+
+        </div>
+
+        <div class="row">
+          <div id="instructionsCarry" class="info inputBoxes col-lg-12 col-md-12 col-sm-12">
+
+              <h5>How This Calander Works</h5>
+              All input feilds take user input<br />
+              <br />
+              All major holidays and bank holidays are set as values for the input field <br />
+              in the HTML. These hard coded holiday dates can be changed in the date picker<br />
+              but will revert back to the hard coded value upon refresh or reload. <br />
+              If a holiday like Christmas or New Year's falls on a weekend and would not be a trading<br />
+              it is not a problem bc weekends are already excluded from business days for the purposes<br />
+              or trading days and carry days. Therefore, its not a problem is they are included on the <br />
+              list.<br />
+              Exra-Holidays can be added in the right column.<br />
+              Extra-Bank Holidays can be added at the end of the Bank Holday Column (middle).<br />
+              <br />
+
+          </div>
+        </div>
+
+        <hr />
+        <hr />
+
+    </div>
+
+
+      <hr />
+      <hr />
+      <hr />
+      <hr />
+      <hr />
+      <hr />
+      <hr />
+      <hr />
+      <hr />
+      <hr />
+      <hr />
+      <hr />
+      <hr />
+      <hr />
+      <hr />
+      <hr />
+      <hr />
+      <hr />
+  </body>
+
+
+  <footer>
+    <script src="index.js" charset="utf-8"></script>
+  </footer>
+
+</html>
